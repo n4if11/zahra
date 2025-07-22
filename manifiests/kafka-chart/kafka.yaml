@@ -1,0 +1,27 @@
+apiVersion: kafka.strimzi.io/v1beta2
+kind: Kafka
+metadata:
+  name: my-cluster
+  namespace: kafka
+spec:
+  kafka:
+    # … your existing kafka settings …
+    metricsConfig:
+      type: jmxPrometheusExporter                         # ← must specify exporter type :contentReference[oaicite:0]{index=0}
+      valueFrom:
+        configMapKeyRef:
+          name: my-cluster-kafka-metrics
+          key: metrics-config.yaml
+
+  zookeeper:
+    # … your existing zookeeper settings …
+    metricsConfig:
+      type: jmxPrometheusExporter                         # ← same for ZooKeeper :contentReference[oaicite:1]{index=1}
+      valueFrom:
+        configMapKeyRef:
+          name: my-cluster-zk-metrics
+          key: metrics-config.yaml
+
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}

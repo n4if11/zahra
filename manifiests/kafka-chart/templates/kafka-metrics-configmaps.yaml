@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-kafka-metrics
+  namespace: kafka
+data:
+  metrics-config.yaml: |
+    lowercaseOutputName: true
+    rules: []
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-zk-metrics
+  namespace: kafka
+data:
+  metrics-config.yaml: |
+    lowercaseOutputName: true
+    rules: []

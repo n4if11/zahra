@@ -1,0 +1,10 @@
+apiVersion: v2
+name: kafka-chart
+version: 0.1.0
+description: “Umbrella chart to install Strimzi + my Kafka cluster”
+dependencies:
+  - name: strimzi-kafka-operator
+    version: 0.45.0
+    repository: https://strimzi.io/charts/
+    # optional alias if you want to refer to it under a different key:
+    # alias: strimzi

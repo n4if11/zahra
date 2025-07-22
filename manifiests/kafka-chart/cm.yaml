@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-cluster-kafka-metrics
+  namespace: kafka
+data:
+  metrics-config.yaml: |
+    # empty rules → export everything
+    lowercaseOutputName: true
+    rules: []
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: my-cluster-zk-metrics
+  namespace: kafka
+data:
+  metrics-config.yaml: |
+    lowercaseOutputName: true
+    rules: []
