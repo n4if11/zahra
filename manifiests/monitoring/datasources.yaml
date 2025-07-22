@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: monitoring      # <— Grafana’s namespace
+  labels:
+    grafana_datasource: "true"
+data:
+  datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: "Loki-Loki-Only"
+        type: loki
+        access: proxy
+        url: http://loki-gateway.loki.svc.zahra.local
+        jsonData:
+          maxLines: 1000
+        editable: false
+        headers:
+          X-Scope-OrgID: "1"
+
+      - name: "Loki-All-Except-Loki"
+        type: loki
+        access: proxy
+        url: http://loki-gateway.loki.svc.zahra.local
+        jsonData:
+          maxLines: 1000
+        editable: false
+        headers:
+          X-Scope-OrgID: "2"
+
+
+# datasources:
+#   - name: Loki-Loki-Only
+#     type: loki
+#     access: proxy
+#     url: http://loki-gateway/
+#     jsonData:
+#       maxLines: 1000
+      
+#   - name: Loki-All-Except-Loki
+#     type: loki
+#     access: proxy
+#     url: http://loki-gateway/
+#     jsonData:
+#       maxLines: 1000

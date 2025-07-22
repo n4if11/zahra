@@ -1,0 +1,27 @@
+# grafana:
+#   persistence:
+#     enabled: true
+#   # ─────────────────────────────────────────────────────────────────────────────
+  # datasources:
+  #   datasources.yaml:
+  #     apiVersion: 1
+  #     datasources:
+  #       - name: "Loki-Admin"
+  #         type: loki
+  #         access: proxy
+  #         url:  http://loki-gateway.loki.svc.zahra.local
+  #         jsonData:
+  #           maxLines: 1000
+  #         editable: false
+  #         headers:
+  #           X-Scope-OrgID: "admin-tenant"
+
+  #       - name: "Loki-Dev"
+  #         type: loki
+  #         access: proxy
+  #         url:  http://loki-gateway.loki.svc.zahra.local
+  #         jsonData:
+  #           maxLines: 1000
+  #         editable: false
+  #         headers:
+  #           X-Scope-OrgID: "dev-tenant"

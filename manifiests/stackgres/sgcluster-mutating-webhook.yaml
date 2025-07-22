@@ -1,0 +1,20 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: sgcluster-mutating-webhook
+webhooks:
+  - name: sgcluster.mutating-webhook.stackgres.io
+    clientConfig:
+      service:
+        name: stackgres-operator
+        namespace: stackgres
+        path: /stackgres/mutation/sgcluster
+      # caBundle: <CA_BUNDLE> # Insert the CA bundle if needed
+    rules:
+      - operations: ["CREATE", "UPDATE"]
+        apiGroups: ["stackgres.io"]
+        apiVersions: ["v1"]
+        resources: ["sgclusters"]
+    admissionReviewVersions: ["v1"]
+    sideEffects: None
+    failurePolicy: Fail

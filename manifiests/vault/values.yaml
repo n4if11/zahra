@@ -1,0 +1,9 @@
+server:
+  resources:
+    requests:
+      cpu: "80m"       # 8 CPUs = 8000 millicores
+      memory: "16Mi"  # 16 GiB = 16384 MiB
+    limits:
+      cpu: "160m"
+      memory: "32Mi"
+
