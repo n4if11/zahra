@@ -1,8 +1,0 @@
-# override the upstream Strimzi chart if you like:
-strimzi-kafka-operator:
-  installCRDs: true    # make sure all CRDs get installed
-  watchNamespaces: ["kafka"]
-  fullnameOverride: strimzi-cluster-operator
-
-# no values needed for your own templates,
-# unless you want to parameterize them here
