@@ -22,7 +22,7 @@ spec:
       project: default
       source:
         path: cluster-resources/{{name}}
-        repoURL: https://github.com/n4if11/test
+        repoURL: https://github.com/n4if11/zahra
       syncPolicy:
         automated:
           allowEmpty: true
