@@ -14,7 +14,7 @@ spec:
   project: default
   source:
     path: bootstrap
-    repoURL: https://github.com/n4if11/test
+    repoURL: https://github.com/n4if11/zahra
   syncPolicy:
     automated:
       allowEmpty: true

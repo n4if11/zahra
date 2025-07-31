@@ -32,7 +32,7 @@ spec:
   goTemplateOptions: ["missingkey=default"]
   generators:
     - git:
-        repoURL: https://github.com/n4if11/test
+        repoURL: https://github.com/n4if11/zahra
         revision: "HEAD"
         requeueAfterSeconds: 20
         files:
@@ -52,7 +52,7 @@ spec:
         name: '{{ default .values.cluster .destServer }}'
       project: '{{.values.project}}'
       source:
-        repoURL: '{{ default "https://github.com/n4if11/test" .repoURL }}'
+        repoURL: '{{ default "https://github.com/n4if11/zahra" .repoURL }}'
         targetRevision: '{{ default "HEAD" .srcTargetRevision }}'
         path: '{{ default .values.app_path .srcPath }}'
       syncPolicy:
