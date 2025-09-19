@@ -6,3 +6,4 @@ srcPath: "" # If Empty the Application source path will be this file's path "app
 srcTargetRevision: "" # If Empty the Application source target revision will be "HEAD"
 labels: {} # Additional Application labels
 annotations: {} # Additional Application annotations
+autosync: "false"
