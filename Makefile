@@ -1,4 +1,4 @@
-CLUSTER_NAME=test
+CLUSTER_NAME=zahra
 NETWORK_NAME=k3d-$(CLUSTER_NAME)
 CLUSTER_DOMAIN=$(CLUSTER_NAME).local
 #NETWORK_SUBNET=10.4.0.0/16
@@ -13,7 +13,7 @@ create:
 	k3d cluster create \
 		--image rancher/k3s:v1.30.6-k3s1 \
 		--servers 1 \
-		--agents 3 \
+		--agents 2 \
 		--api-port 6550 \
     	--port 8081:80@loadbalancer \
     	--port 8443:443@loadbalancer \
