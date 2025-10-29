@@ -8,6 +8,9 @@ postgres:
       value: admin@123
       
   userDatabase:
+    name:
+      secretKey: user
+      value: postgres_user
     user:
       secretKey: user
       value: postgres_user
