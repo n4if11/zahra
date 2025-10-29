@@ -4,10 +4,10 @@ apim:
     security:
       allowInsecureImages: true
   es:
-    enabled: true
+    enabled: false
   
   elasticsearch:
-    enabled: true
+    enabled: false
     sysctlImage:
       registry: docker.io
       repository: bitnamilegacy/os-shell
@@ -57,54 +57,6 @@ apim:
           cpu: 50m
           memory: 256M
     
-    # Master node configuration
-    # master:
-    #   replicaCount: 2
-    #   heapSize: 512m
-    #   resources:
-    #     limits:
-    #       cpu: 500m
-    #       memory: 1Gi
-    #     requests:
-    #       cpu: 100m
-    #       memory: 512Mi
-    
-    # # Data node configuration
-    # data:
-    #   replicaCount: 1
-    #   heapSize: 512m
-    #   resources:
-    #     limits:
-    #       cpu: 500m
-    #       memory: 1Gi
-    #     requests:
-    #       cpu: 100m
-    #       memory: 512Mi
-    
-    # # Coordinating node configuration
-    # coordinating:
-    #   replicaCount: 1
-    #   heapSize: 256m
-    #   resources:
-    #     limits:
-    #       cpu: 500m
-    #       memory: 512Mi
-    #     requests:
-    #       cpu: 50m
-    #       memory: 256Mi
-    
-    # # Ingest node configuration
-    # ingest:
-    #   enabled: true
-    #   replicaCount: 1
-    #   heapSize: 256m
-    #   resources:
-    #     limits:
-    #       cpu: 500m
-    #       memory: 512Mi
-    #     requests:
-    #       cpu: 50m
-    #       memory: 256Mi
   
   # JDBC Configuration (global level)
   jdbc:
@@ -131,6 +83,8 @@ apim:
         value: jdbc
       - name: gravitee_ratelimit_type
         value: jdbc
+      - name: gravitee_analytics_type
+        value: none
       # - name: gravitee_reporters_elasticsearch_enabled
       #   value: "false"
       # - name: gravitee_analytics_elasticsearch_enabled
@@ -148,17 +102,17 @@ apim:
       - name: gravitee_management_jdbc_driver
         value: /opt/graviteeio-management-api/plugins/ext/repository-jdbc/postgresql-42.7.4.jar
     
-    # gravitee:
-    #   reporters:
-    #     elasticsearch:
-    #       enabled: false
-    #   analytics:
-    #     enabled: false
-    #   management:
-    #     type: jdbc
-    #   services:
-    #     sync:
-    #       enabled: false
+    gravitee:
+      reporters:
+        elasticsearch:
+          enabled: false
+      analytics:
+        enabled: false
+      management:
+        type: jdbc
+      services:
+        sync:
+          enabled: false
     
     jdbc:
       url: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
