@@ -8,8 +8,8 @@ apim:
     driverClassName: org.postgresql.Driver
     username: postgres 
     password: admin@123
-  # management:
-  #   type: jdbc
+  management:
+    type: jdbc
   es:
     enabled: true
   elasticsearch:
