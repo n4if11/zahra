@@ -1,0 +1,7 @@
+settings:
+  superuser:
+   secretKey: user
+   value: admin
+  superuserPassword:
+   secretKey: password
+   value: admin
