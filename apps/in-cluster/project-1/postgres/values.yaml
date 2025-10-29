@@ -10,10 +10,10 @@ postgres:
   userDatabase:
     name:
       secretKey: user
-      value: postgres_user
+      value: user
     user:
       secretKey: user
-      value: postgres_user
+      value: user
     password:
       secretKey: password
       value: admin@123
