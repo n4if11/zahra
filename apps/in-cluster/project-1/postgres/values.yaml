@@ -9,7 +9,7 @@ postgres:
       
   userDatabase:
     name:
-      secretKey: user
+      secretKey: postgres
       value: user
     user:
       secretKey: user
