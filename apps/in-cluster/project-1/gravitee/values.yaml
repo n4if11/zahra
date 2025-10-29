@@ -1,39 +1,100 @@
 apim:
-  gateway:
-    gravitee:
-      # 1) Turn OFF the Elasticsearch reporter at runtime
-      reporters:
-        elasticsearch:
-          enabled: false
-
-      # 2) Disable analytics entirely (safest if you’re not using ES)
-      analytics:
-        enabled: false
-  api:
-    gravitee:
-      reporters:
-        elasticsearch:
-          enabled: false
-      analytics:
-        enabled: false
+  # Global Elasticsearch disable
+  es:
+    enabled: false
+  
+  elasticsearch:
+    enabled: false
+  
+  # JDBC Configuration (global level)
   jdbc:
     url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
-    # the URL to download the driver
     driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
-    # the version of the gravitee-repository-jdbc (only required for apim versions < 3.5.0)
-  #  repositoryVersion: 3.3.0
     driverClassName: org.postgresql.Driver
     username: postgres 
     password: admin@123
+  
+  # Management & Rate Limit repositories
   management:
     type: jdbc
+  
   ratelimit:
     type: jdbc
-  es:
-    enabled: false
-  elasticsearch:
-   enabled: false
-  #url: your_public_ui_url
+  
+  # API Component Configuration
+  api:
+    enabled: true
+    
+    gravitee:
+      # Disable all ES reporters
+      reporters:
+        elasticsearch:
+          enabled: false
+      
+      # Disable analytics
+      analytics:
+        enabled: false
+      
+      # Force management repository to JDBC
+      management:
+        type: jdbc
+      
+      # Explicitly disable ES as a service
+      services:
+        sync:
+          enabled: false
+    
+    # API-specific JDBC config
+    jdbc:
+      url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
+      driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
+      driverClassName: org.postgresql.Driver
+      username: postgres 
+      password: admin@123
+  
+  # Gateway Component Configuration
+  gateway:
+    enabled: true
+    
+    gravitee:
+      # Disable all ES reporters
+      reporters:
+        elasticsearch:
+          enabled: false
+      
+      # Disable analytics
+      analytics:
+        enabled: false
+      
+      # Force management repository to JDBC
+      management:
+        type: jdbc
+      
+      # Force rate limit to JDBC
+      ratelimit:
+        type: jdbc
+    
+    # Gateway-specific JDBC config
+    jdbc:
+      url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
+      driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
+      driverClassName: org.postgresql.Driver
+      username: postgres 
+      password: admin@123
+    
+    # Increase readiness probe delays to allow plugin download
+    readinessProbe:
+      initialDelaySeconds: 60
+      periodSeconds: 30
+    
+    livenessProbe:
+      initialDelaySeconds: 120
+      periodSeconds: 30
 
-  # ratelimit:
-  #   type: mongodb
+  # UI Configuration (optional but recommended)
+  ui:
+    enabled: true
+
+  # Portal Configuration (optional but recommended)
+  portal:
+    enabled: true
