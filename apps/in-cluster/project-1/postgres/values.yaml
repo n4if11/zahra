@@ -1,7 +1,7 @@
 settings:
   superuser:
    secretKey: user
-   value: admin
+   value: postgres_admin
   superuserPassword:
    secretKey: password
-   value: admin
+   value: admin@123
