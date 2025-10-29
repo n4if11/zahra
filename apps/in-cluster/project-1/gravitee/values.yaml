@@ -1,5 +1,8 @@
 apim:
-  # Global Elasticsearch disable
+
+  global:
+    security:
+      allowInsecureImages: true
   es:
     enabled: true
   
