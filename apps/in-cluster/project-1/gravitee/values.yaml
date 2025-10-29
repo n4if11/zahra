@@ -44,27 +44,22 @@ apim:
         value: postgres
       - name: gravitee_management_jdbc_password
         value: admin@123
+      # Point to the downloaded driver
+      - name: gravitee_management_jdbc_driver
+        value: /opt/graviteeio-management-api/plugins/ext/repository-jdbc/postgresql-42.7.4.jar
     
     gravitee:
-      # Disable all ES reporters
       reporters:
         elasticsearch:
           enabled: false
-      
-      # Disable analytics
       analytics:
         enabled: false
-      
-      # Force management repository to JDBC
       management:
         type: jdbc
-      
-      # Explicitly disable ES as a service
       services:
         sync:
           enabled: false
     
-    # API-specific JDBC config
     jdbc:
       url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
@@ -72,14 +67,16 @@ apim:
       username: postgres 
       password: admin@123
     
-    # Increase delays for initialization
+    # Longer delays to ensure JDBC plugin initialization
     readinessProbe:
-      initialDelaySeconds: 90
+      initialDelaySeconds: 120
       periodSeconds: 30
+      failureThreshold: 5
     
     livenessProbe:
-      initialDelaySeconds: 150
+      initialDelaySeconds: 180
       periodSeconds: 30
+      failureThreshold: 5
   
   # Gateway Component Configuration
   gateway:
@@ -95,39 +92,36 @@ apim:
         value: "false"
       - name: gravitee_analytics_elasticsearch_enabled
         value: "false"
-      # Explicitly set JDBC properties
+      # Explicitly set JDBC properties for management
       - name: gravitee_management_jdbc_url
         value: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       - name: gravitee_management_jdbc_username
         value: postgres
       - name: gravitee_management_jdbc_password
         value: admin@123
+      - name: gravitee_management_jdbc_driver
+        value: /opt/graviteeio-gateway/plugins/ext/repository-jdbc/postgresql-42.7.4.jar
+      # Explicitly set JDBC properties for rate limiting
       - name: gravitee_ratelimit_jdbc_url
         value: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       - name: gravitee_ratelimit_jdbc_username
         value: postgres
       - name: gravitee_ratelimit_jdbc_password
         value: admin@123
+      - name: gravitee_ratelimit_jdbc_driver
+        value: /opt/graviteeio-gateway/plugins/ext/repository-jdbc/postgresql-42.7.4.jar
     
     gravitee:
-      # Disable all ES reporters
       reporters:
         elasticsearch:
           enabled: false
-      
-      # Disable analytics
       analytics:
         enabled: false
-      
-      # Force management repository to JDBC
       management:
         type: jdbc
-      
-      # Force rate limit to JDBC
       ratelimit:
         type: jdbc
     
-    # Gateway-specific JDBC config
     jdbc:
       url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
@@ -135,19 +129,19 @@ apim:
       username: postgres 
       password: admin@123
     
-    # Increase readiness probe delays to allow plugin download
+    # Longer delays to ensure JDBC plugin initialization
     readinessProbe:
-      initialDelaySeconds: 90
+      initialDelaySeconds: 120
       periodSeconds: 30
+      failureThreshold: 5
     
     livenessProbe:
-      initialDelaySeconds: 150
+      initialDelaySeconds: 180
       periodSeconds: 30
+      failureThreshold: 5
 
-  # UI Configuration
   ui:
     enabled: true
 
-  # Portal Configuration
   portal:
     enabled: true
