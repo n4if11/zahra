@@ -1,9 +1,9 @@
 postgres:
   settings:
     superuser:
-    secretKey: user
-    value: postgres_admin
+      secretKey: user
+      value: postgres_admin
     superuserPassword:
-    secretKey: password
-    value: admin@123
-    
+      secretKey: password
+      value: admin@123
+      
