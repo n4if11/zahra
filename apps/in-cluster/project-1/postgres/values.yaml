@@ -7,3 +7,10 @@ postgres:
       secretKey: password
       value: admin@123
       
+  userDatabase:
+    user:
+      secretKey: user
+      value: postgres_user
+    password:
+      secretKey: password
+      value: admin@123
