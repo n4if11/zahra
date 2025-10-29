@@ -1,10 +1,10 @@
 apim:
   # Global Elasticsearch disable
   es:
-    enabled: false
+    enabled: true
   
   elasticsearch:
-    enabled: false
+    enabled: true
   
   # JDBC Configuration (global level)
   jdbc:
@@ -31,12 +31,12 @@ apim:
         value: jdbc
       - name: gravitee_ratelimit_type
         value: jdbc
-      - name: gravitee_reporters_elasticsearch_enabled
-        value: "false"
-      - name: gravitee_analytics_elasticsearch_enabled
-        value: "false"
-      - name: gravitee_services_sync_enabled
-        value: "false"
+      # - name: gravitee_reporters_elasticsearch_enabled
+      #   value: "false"
+      # - name: gravitee_analytics_elasticsearch_enabled
+      #   value: "false"
+      # - name: gravitee_services_sync_enabled
+      #   value: "false"
       # Explicitly set JDBC properties
       - name: gravitee_management_jdbc_url
         value: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
@@ -48,17 +48,17 @@ apim:
       - name: gravitee_management_jdbc_driver
         value: /opt/graviteeio-management-api/plugins/ext/repository-jdbc/postgresql-42.7.4.jar
     
-    gravitee:
-      reporters:
-        elasticsearch:
-          enabled: false
-      analytics:
-        enabled: false
-      management:
-        type: jdbc
-      services:
-        sync:
-          enabled: false
+    # gravitee:
+    #   reporters:
+    #     elasticsearch:
+    #       enabled: false
+    #   analytics:
+    #     enabled: false
+    #   management:
+    #     type: jdbc
+    #   services:
+    #     sync:
+    #       enabled: false
     
     jdbc:
       url: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
@@ -88,10 +88,10 @@ apim:
         value: jdbc
       - name: gravitee_ratelimit_type
         value: jdbc
-      - name: gravitee_reporters_elasticsearch_enabled
-        value: "false"
-      - name: gravitee_analytics_elasticsearch_enabled
-        value: "false"
+      # - name: gravitee_reporters_elasticsearch_enabled
+      #   value: "false"
+      # - name: gravitee_analytics_elasticsearch_enabled
+      #   value: "false"
       # Explicitly set JDBC properties for management
       - name: gravitee_management_jdbc_url
         value: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
@@ -111,16 +111,16 @@ apim:
       - name: gravitee_ratelimit_jdbc_driver
         value: /opt/graviteeio-gateway/plugins/ext/repository-jdbc/postgresql-42.7.4.jar
     
-    gravitee:
-      reporters:
-        elasticsearch:
-          enabled: false
-      analytics:
-        enabled: false
-      management:
-        type: jdbc
-      ratelimit:
-        type: jdbc
+    # gravitee:
+    #   reporters:
+    #     elasticsearch:
+    #       enabled: false
+    #   analytics:
+    #     enabled: false
+    #   management:
+    #     type: jdbc
+    #   ratelimit:
+    #     type: jdbc
     
     jdbc:
       url: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
