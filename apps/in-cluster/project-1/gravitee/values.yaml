@@ -25,6 +25,26 @@ apim:
   api:
     enabled: true
     
+    # Environment variables to override ES configuration
+    env:
+      - name: gravitee_management_type
+        value: jdbc
+      - name: gravitee_ratelimit_type
+        value: jdbc
+      - name: gravitee_reporters_elasticsearch_enabled
+        value: "false"
+      - name: gravitee_analytics_elasticsearch_enabled
+        value: "false"
+      - name: gravitee_services_sync_enabled
+        value: "false"
+      # Explicitly set JDBC properties
+      - name: gravitee_management_jdbc_url
+        value: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
+      - name: gravitee_management_jdbc_username
+        value: postgres
+      - name: gravitee_management_jdbc_password
+        value: admin@123
+    
     gravitee:
       # Disable all ES reporters
       reporters:
@@ -51,10 +71,43 @@ apim:
       driverClassName: org.postgresql.Driver
       username: postgres 
       password: admin@123
+    
+    # Increase delays for initialization
+    readinessProbe:
+      initialDelaySeconds: 90
+      periodSeconds: 30
+    
+    livenessProbe:
+      initialDelaySeconds: 150
+      periodSeconds: 30
   
   # Gateway Component Configuration
   gateway:
     enabled: true
+    
+    # Environment variables to override ES configuration
+    env:
+      - name: gravitee_management_type
+        value: jdbc
+      - name: gravitee_ratelimit_type
+        value: jdbc
+      - name: gravitee_reporters_elasticsearch_enabled
+        value: "false"
+      - name: gravitee_analytics_elasticsearch_enabled
+        value: "false"
+      # Explicitly set JDBC properties
+      - name: gravitee_management_jdbc_url
+        value: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
+      - name: gravitee_management_jdbc_username
+        value: postgres
+      - name: gravitee_management_jdbc_password
+        value: admin@123
+      - name: gravitee_ratelimit_jdbc_url
+        value: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
+      - name: gravitee_ratelimit_jdbc_username
+        value: postgres
+      - name: gravitee_ratelimit_jdbc_password
+        value: admin@123
     
     gravitee:
       # Disable all ES reporters
@@ -84,17 +137,17 @@ apim:
     
     # Increase readiness probe delays to allow plugin download
     readinessProbe:
-      initialDelaySeconds: 60
+      initialDelaySeconds: 90
       periodSeconds: 30
     
     livenessProbe:
-      initialDelaySeconds: 120
+      initialDelaySeconds: 150
       periodSeconds: 30
 
-  # UI Configuration (optional but recommended)
+  # UI Configuration
   ui:
     enabled: true
 
-  # Portal Configuration (optional but recommended)
+  # Portal Configuration
   portal:
     enabled: true
