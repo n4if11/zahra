@@ -10,10 +10,10 @@ postgres:
   userDatabase:
     name:
       # secretKey: postgres
-      value: default
+      value: graviteeapim
     user:
       # secretKey: user
-      value: user
+      value: postgres
     password:
       # secretKey: password
       value: admin@123
