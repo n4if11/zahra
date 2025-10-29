@@ -1,6 +1,6 @@
 apim:
   jdbc:
-    url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
+    url: jdbc:postgresql:in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
     # the URL to download the driver
     driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
     # the version of the gravitee-repository-jdbc (only required for apim versions < 3.5.0)
