@@ -8,7 +8,7 @@ apim:
   
   # JDBC Configuration (global level)
   jdbc:
-    url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
+    url: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
     driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
     driverClassName: org.postgresql.Driver
     username: postgres 
