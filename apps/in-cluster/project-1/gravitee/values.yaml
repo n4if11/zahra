@@ -8,34 +8,10 @@ apim:
   
   elasticsearch:
     enabled: true
-    initContainers:
-      - name: sysctl
-        image: docker.io/bitnami/os-shell:12-debian-12-r48
-        imagePullPolicy: IfNotPresent
-        command:
-          - /bin/bash
-          - -ec
-          - |
-            CURRENT=`sysctl -n vm.max_map_count`;
-            DESIRED="262144";
-            if [ "$DESIRED" -gt "$CURRENT" ]; then
-                sysctl -w vm.max_map_count=262144;
-            fi;
-            CURRENT=`sysctl -n fs.file-max`;
-            DESIRED="65536";
-            if [ "$DESIRED" -gt "$CURRENT" ]; then
-                sysctl -w fs.file-max=65536;
-            fi;
-        securityContext:
-          privileged: true
-          runAsUser: 0
-        resources:
-          limits:
-            cpu: 150m
-            memory: 192Mi
-          requests:
-            cpu: 100m
-            memory: 128Mi
+    sysctlImage:
+      registry: docker.io
+      repository: bitnamilegacy/os-shell
+      tag: 12-debian-12-r48
     
     # Master node configuration
     # master:
