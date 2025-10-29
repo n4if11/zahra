@@ -1,4 +1,21 @@
 apim:
+  gateway:
+    gravitee:
+      # 1) Turn OFF the Elasticsearch reporter at runtime
+      reporters:
+        elasticsearch:
+          enabled: false
+
+      # 2) Disable analytics entirely (safest if you’re not using ES)
+      analytics:
+        enabled: false
+  api:
+    gravitee:
+      reporters:
+        elasticsearch:
+          enabled: false
+      analytics:
+        enabled: false
   jdbc:
     url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
     # the URL to download the driver
