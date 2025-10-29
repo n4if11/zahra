@@ -5,6 +5,7 @@ apim:
     driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
     # the version of the gravitee-repository-jdbc (only required for apim versions < 3.5.0)
   #  repositoryVersion: 3.3.0
+    driverClassName: org.postgresql.Driver
     username: postgres 
     password: admin@123
   management:
