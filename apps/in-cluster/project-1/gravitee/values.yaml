@@ -79,7 +79,8 @@ apim:
 
     ingress:
       kubernetes.io/ingress.class: nginx
-      hosts: api.zahra.local
+      hosts: 
+        - api.zahra.local
     # Environment variables to override ES configuration
     env:
       - name: gravitee_management_type
@@ -140,8 +141,9 @@ apim:
     enabled: true
 
     ingress:
-      kubernetes.io/ingress.class: nginx
-      hosts: gateway.zahra.local
+      ingressClassName: nginx
+      hosts: 
+        - gateway.zahra.local
     # Environment variables to override ES configuration
     env:
       - name: gravitee_management_type
