@@ -214,12 +214,18 @@ apim:
       failureThreshold: 5
 
   ui:
-    # ingress:
-    #   enabled: false
+    ingress:
+      ingressClassName: nginx
+      hosts:
+       - api.zahra.local
 
     enabled: true
 
   portal:
+    ingress:
+      ingressClassName: nginx
+      hosts:
+       - api.zahra.local
     # ingress:
     #   enabled: false
       
