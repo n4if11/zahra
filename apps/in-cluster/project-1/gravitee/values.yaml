@@ -76,8 +76,8 @@ apim:
   # API Component Configuration
   api:
     enabled: true
-    ingress:
-      enabled: false
+    # ingress:
+    #   enabled: false
     # Environment variables to override ES configuration
     env:
       - name: gravitee_management_type
@@ -137,8 +137,8 @@ apim:
   gateway:
     enabled: true
 
-    ingress:
-      enabled: false
+    # ingress:
+    #   enabled: false
     # Environment variables to override ES configuration
     env:
       - name: gravitee_management_type
