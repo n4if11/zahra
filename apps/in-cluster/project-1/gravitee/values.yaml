@@ -217,7 +217,7 @@ apim:
     ingress:
       ingressClassName: nginx
       hosts:
-       - api.zahra.local
+       - ui.zahra.local
 
     enabled: true
 
@@ -225,7 +225,7 @@ apim:
     ingress:
       ingressClassName: nginx
       hosts:
-       - api.zahra.local
+       - portal.zahra.local
     # ingress:
     #   enabled: false
       
