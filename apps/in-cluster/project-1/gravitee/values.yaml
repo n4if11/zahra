@@ -103,6 +103,8 @@ apim:
     enabled: true
     
     env:
+      - name: portal.entrypoint
+        value: http://gateway.zahra.local/
       - name: gravitee_management_type
         value: jdbc
       - name: gravitee_ratelimit_type
@@ -167,6 +169,8 @@ apim:
     env:
       - name: MGMT_API_URL
         value: http://api.zahra.local/management
+    api:
+      url: http://api.zahra.local 
     
     ingress:
       enabled: true
