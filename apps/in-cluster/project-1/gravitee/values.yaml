@@ -60,7 +60,7 @@ apim:
   
   # JDBC Configuration (global level)
   jdbc:
-    url: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
+    url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
     driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
     driverClassName: org.postgresql.Driver
     username: postgres 
@@ -108,7 +108,7 @@ apim:
         value: "false"
       # Explicitly set JDBC properties
       - name: gravitee_management_jdbc_url
-        value: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
+        value: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       - name: gravitee_management_jdbc_username
         value: postgres
       - name: gravitee_management_jdbc_password
@@ -130,7 +130,7 @@ apim:
           enabled: false
     
     jdbc:
-      url: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
+      url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
       driverClassName: org.postgresql.Driver
       username: postgres 
@@ -167,7 +167,7 @@ apim:
         value: "false"
       # Explicitly set JDBC properties for management
       - name: gravitee_management_jdbc_url
-        value: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
+        value: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       - name: gravitee_management_jdbc_username
         value: postgres
       - name: gravitee_management_jdbc_password
@@ -176,7 +176,7 @@ apim:
         value: /opt/graviteeio-gateway/plugins/ext/repository-jdbc/postgresql-42.7.4.jar
       # Explicitly set JDBC properties for rate limiting
       - name: gravitee_ratelimit_jdbc_url
-        value: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
+        value: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       - name: gravitee_ratelimit_jdbc_username
         value: postgres
       - name: gravitee_ratelimit_jdbc_password
@@ -196,7 +196,7 @@ apim:
         type: jdbc
     
     jdbc:
-      url: jdbc:postgresql://in-cluster-postgres.postgres.svc.zahra.local:5432/graviteeapim
+      url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
       driverClassName: org.postgresql.Driver
       username: postgres 
