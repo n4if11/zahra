@@ -1,64 +1,15 @@
 apim:
-
   global:
     security:
       allowInsecureImages: true
+  
   es:
     enabled: false
   
   elasticsearch:
     enabled: false
-    sysctlImage:
-      registry: docker.io
-      repository: bitnamilegacy/os-shell
-      tag: 12-debian-12-r48
-    master:
-      replicaCount: 1
-      heapSize: 512m
-      resources:
-        limits:
-          cpu: 500m
-          memory: 2Gi
-        requests:
-          cpu: 100m
-          memory: 512Mi
-    
-    data:
-      replicaCount: 1
-      heapSize: 512m
-      resources:
-        limits:
-          cpu: 500m
-          memory: 2Gi
-        requests:
-          cpu: 100m
-          memory: 512Mi
-    
-    coordinating:
-      replicaCount: 1
-      heapSize: 256m
-      resources:
-        limits:
-          cpu: 500m
-          memory: 1Gi
-        requests:
-          cpu: 50m
-          memory: 256Mi
-    
-    ingest:
-      enabled: true
-      replicaCount: 1
-      heapSize: 256m
-      resources:
-        limits:
-          cpu: 500m
-          memory: 1Gi
-        requests:
-          cpu: 50m
-          memory: 256M
-    
   
-  # JDBC Configuration (global level)
+  # JDBC Configuration
   jdbc:
     url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
     driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
@@ -66,17 +17,20 @@ apim:
     username: postgres 
     password: admin@123
   
-  # Management & Rate Limit repositories
   management:
     type: jdbc
   
   ratelimit:
     type: jdbc
   
-  # API Component Configuration
+  # API Component
   api:
     enabled: true
-
+    
+    service:
+      type: ClusterIP
+      externalPort: 8083
+    
     ingress:
       management:
         enabled: true
@@ -85,6 +39,9 @@ apim:
         pathType: Prefix
         hosts:
           - api.zahra.local
+        annotations:
+          nginx.ingress.kubernetes.io/rewrite-target: /management
+      
       portal:
         enabled: true
         ingressClassName: nginx
@@ -92,7 +49,9 @@ apim:
         pathType: Prefix
         hosts:
           - api.zahra.local
-    # Environment variables to override ES configuration
+        annotations:
+          nginx.ingress.kubernetes.io/rewrite-target: /portal
+    
     env:
       - name: gravitee_management_type
         value: jdbc
@@ -106,16 +65,14 @@ apim:
         value: "false"
       - name: gravitee_services_sync_enabled
         value: "false"
-      # Explicitly set JDBC properties
       - name: gravitee_management_jdbc_url
         value: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       - name: gravitee_management_jdbc_username
         value: postgres
       - name: gravitee_management_jdbc_password
         value: admin@123
-      # Point to the downloaded driver
-      - name: gravitee_management_jdbc_driver
-        value: /opt/graviteeio-management-api/plugins/ext/repository-jdbc/postgresql-42.7.4.jar
+      - name: gravitee_management_jdbc_liquibase_enabled
+        value: "true"
     
     gravitee:
       reporters:
@@ -129,33 +86,34 @@ apim:
         sync:
           enabled: false
     
-    jdbc:
-      url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
-      driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
-      driverClassName: org.postgresql.Driver
-      username: postgres 
-      password: admin@123
-    
-    # Longer delays to ensure JDBC plugin initialization
     readinessProbe:
-      initialDelaySeconds: 120
+      initialDelaySeconds: 60
       periodSeconds: 30
-      failureThreshold: 5
+      failureThreshold: 3
     
     livenessProbe:
-      initialDelaySeconds: 180
+      initialDelaySeconds: 120
       periodSeconds: 30
-      failureThreshold: 5
+      failureThreshold: 3
   
-  # Gateway Component Configuration
+  # Gateway Component
   gateway:
     enabled: true
-
+    
+    service:
+      type: ClusterIP
+      externalPort: 8082
+    
     ingress:
+      enabled: true
       ingressClassName: nginx
-      hosts: 
+      path: /
+      pathType: Prefix
+      hosts:
         - gateway.zahra.local
-    # Environment variables to override ES configuration
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    
     env:
       - name: gravitee_management_type
         value: jdbc
@@ -165,24 +123,22 @@ apim:
         value: "false"
       - name: gravitee_analytics_elasticsearch_enabled
         value: "false"
-      # Explicitly set JDBC properties for management
       - name: gravitee_management_jdbc_url
         value: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       - name: gravitee_management_jdbc_username
         value: postgres
       - name: gravitee_management_jdbc_password
         value: admin@123
-      - name: gravitee_management_jdbc_driver
-        value: /opt/graviteeio-gateway/plugins/ext/repository-jdbc/postgresql-42.7.4.jar
-      # Explicitly set JDBC properties for rate limiting
+      - name: gravitee_management_jdbc_liquibase_enabled
+        value: "true"
       - name: gravitee_ratelimit_jdbc_url
         value: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
       - name: gravitee_ratelimit_jdbc_username
         value: postgres
       - name: gravitee_ratelimit_jdbc_password
         value: admin@123
-      - name: gravitee_ratelimit_jdbc_driver
-        value: /opt/graviteeio-gateway/plugins/ext/repository-jdbc/postgresql-42.7.4.jar
+      - name: gravitee_ratelimit_jdbc_liquibase_enabled
+        value: "true"
     
     gravitee:
       reporters:
@@ -195,38 +151,48 @@ apim:
       ratelimit:
         type: jdbc
     
-    jdbc:
-      url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
-      driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
-      driverClassName: org.postgresql.Driver
-      username: postgres 
-      password: admin@123
-    
-    # Longer delays to ensure JDBC plugin initialization
     readinessProbe:
-      initialDelaySeconds: 120
+      initialDelaySeconds: 60
       periodSeconds: 30
-      failureThreshold: 5
+      failureThreshold: 3
     
     livenessProbe:
-      initialDelaySeconds: 180
+      initialDelaySeconds: 120
       periodSeconds: 30
-      failureThreshold: 5
+      failureThreshold: 3
 
+  # UI Component
   ui:
-    ingress:
-      ingressClassName: nginx
-      hosts:
-       - ui.zahra.local
-
     enabled: true
+    
+    service:
+      type: ClusterIP
+      externalPort: 8080
+    
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      path: /
+      pathType: Prefix
+      hosts:
+        - console.zahra.local
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-redirect: "false"
 
+  # Portal Component
   portal:
-    ingress:
-      ingressClassName: nginx
-      hosts:
-       - portal.zahra.local
-    # ingress:
-    #   enabled: false
-      
     enabled: true
+    
+    service:
+      type: ClusterIP
+      externalPort: 8080
+    
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      path: /
+      pathType: Prefix
+      hosts:
+        - portal.zahra.local
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-redirect: "false"
