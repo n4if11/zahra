@@ -28,6 +28,8 @@ apim:
     
     # Fix: Remove duplicate MGMT_API_URL and use HTTP
     env:
+      - name: portal.entrypoint
+        value: http://gateway.zahra.local/
       - name: gravitee_management_type
         value: jdbc
       - name: gravitee_ratelimit_type
@@ -103,8 +105,6 @@ apim:
     enabled: true
     
     env:
-      - name: portal.entrypoint
-        value: http://gateway.zahra.local/
       - name: gravitee_management_type
         value: jdbc
       - name: gravitee_ratelimit_type
