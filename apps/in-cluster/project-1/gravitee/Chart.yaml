@@ -3,5 +3,5 @@ name: apim
 version: 0.0.0
 dependencies: # A list of the chart requirements (optional)
   - name: apim
-    version: 4.9.1
+    version: 4.9.2
     repository: https://helm.gravitee.io
