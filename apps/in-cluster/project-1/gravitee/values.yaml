@@ -49,8 +49,8 @@ apim:
       - name: gravitee_management_jdbc_liquibase_enabled
         value: "true"
       # Fix portal entrypoint to HTTP
-      # - name: portal.entrypoint
-      #   value: http://gateway.zahra.local/
+      - name: portal.entrypoint
+        value: http://gateway.zahra.local/
     portal:
       entrypoint: "http://gateway.zahra.local/"
     
