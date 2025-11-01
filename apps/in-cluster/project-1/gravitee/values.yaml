@@ -177,6 +177,7 @@ apim:
         - console.zahra.local
       annotations:
         nginx.ingress.kubernetes.io/ssl-redirect: "false"
+        nginx.ingress.kubernetes.io/rewrite-target: ""
         # REMOVED bad rewrite-target
 
   # Portal Component - Fix URLs to use HTTP
@@ -197,4 +198,5 @@ apim:
         - portal.zahra.local
       annotations:
         nginx.ingress.kubernetes.io/ssl-redirect: "false"
+        nginx.ingress.kubernetes.io/rewrite-target: ""
         # REMOVED bad rewrite-target
