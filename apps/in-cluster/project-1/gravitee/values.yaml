@@ -9,7 +9,6 @@ apim:
   elasticsearch:
     enabled: false
   
-  # JDBC Configuration
   jdbc:
     url: jdbc:postgresql://in-cluster-postgres.postgres.svc.cluster.local:5432/graviteeapim
     driver: https://repo1.maven.org/maven2/org/postgresql/postgresql/42.7.4/postgresql-42.7.4.jar
@@ -27,31 +26,7 @@ apim:
   api:
     enabled: true
     
-    service:
-      type: ClusterIP
-      externalPort: 8083
-    
-    ingress:
-      management:
-        enabled: true
-        ingressClassName: nginx
-        path: /management
-        pathType: Prefix
-        hosts:
-          - api.zahra.local
-        annotations:
-          nginx.ingress.kubernetes.io/rewrite-target: /management
-      
-      portal:
-        enabled: true
-        ingressClassName: nginx
-        path: /portal
-        pathType: Prefix
-        hosts:
-          - api.zahra.local
-        annotations:
-          nginx.ingress.kubernetes.io/rewrite-target: /portal
-    
+    # Fix: Remove duplicate MGMT_API_URL and use HTTP
     env:
       - name: gravitee_management_type
         value: jdbc
@@ -73,6 +48,9 @@ apim:
         value: admin@123
       - name: gravitee_management_jdbc_liquibase_enabled
         value: "true"
+      # Fix portal entrypoint to HTTP
+      - name: portal.entrypoint
+        value: http://gateway.zahra.local/
     
     gravitee:
       reporters:
@@ -85,6 +63,30 @@ apim:
       services:
         sync:
           enabled: false
+    
+    # Fix: Remove bad rewrite rules
+    ingress:
+      management:
+        enabled: true
+        ingressClassName: nginx
+        path: /management
+        pathType: Prefix
+        hosts:
+          - api.zahra.local
+        annotations:
+          nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          # REMOVED bad rewrite-target
+      
+      portal:
+        enabled: true
+        ingressClassName: nginx
+        path: /portal
+        pathType: Prefix
+        hosts:
+          - api.zahra.local
+        annotations:
+          nginx.ingress.kubernetes.io/ssl-redirect: "false"
+          # REMOVED bad rewrite-target
     
     readinessProbe:
       initialDelaySeconds: 60
@@ -99,20 +101,6 @@ apim:
   # Gateway Component
   gateway:
     enabled: true
-    
-    service:
-      type: ClusterIP
-      externalPort: 8082
-    
-    ingress:
-      enabled: true
-      ingressClassName: nginx
-      path: /
-      pathType: Prefix
-      hosts:
-        - gateway.zahra.local
-      annotations:
-        nginx.ingress.kubernetes.io/ssl-redirect: "false"
     
     env:
       - name: gravitee_management_type
@@ -151,6 +139,16 @@ apim:
       ratelimit:
         type: jdbc
     
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      path: /
+      pathType: Prefix
+      hosts:
+        - gateway.zahra.local
+      annotations:
+        nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    
     readinessProbe:
       initialDelaySeconds: 60
       periodSeconds: 30
@@ -161,13 +159,14 @@ apim:
       periodSeconds: 30
       failureThreshold: 3
 
-  # UI Component
+  # UI Component - Fix URLs to use HTTP
   ui:
     enabled: true
     
-    service:
-      type: ClusterIP
-      externalPort: 8080
+    # Fix: Use HTTP instead of HTTPS
+    env:
+      - name: MGMT_API_URL
+        value: http://api.zahra.local/management
     
     ingress:
       enabled: true
@@ -178,22 +177,17 @@ apim:
         - console.zahra.local
       annotations:
         nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    env:
-      - name: MGMT_API_URL
-        value: "http://api.zahra.local"   # what the browser will call
-      - name: MANAGEMENT_API_URL
-        value: "http://api.zahra.local"
+        # REMOVED bad rewrite-target
 
-  # Portal Component
+  # Portal Component - Fix URLs to use HTTP
   portal:
     enabled: true
     
-    service:
-      type: ClusterIP
-      externalPort: 8080
+    # Fix: Use HTTP instead of HTTPS
     env:
       - name: PORTAL_API_URL
-        value: "http://api.zahra.local"
+        value: http://api.zahra.local/portal
+    
     ingress:
       enabled: true
       ingressClassName: nginx
@@ -203,3 +197,4 @@ apim:
         - portal.zahra.local
       annotations:
         nginx.ingress.kubernetes.io/ssl-redirect: "false"
+        # REMOVED bad rewrite-target
