@@ -78,7 +78,7 @@ apim:
     enabled: true
 
     ingress:
-      annotations: nginx
+      kubernetes.io/ingress.class: nginx
       hosts: api.zahra.local
     # Environment variables to override ES configuration
     env:
@@ -140,7 +140,7 @@ apim:
     enabled: true
 
     ingress:
-      annotations: nginx
+      kubernetes.io/ingress.class: nginx
       hosts: gateway.zahra.local
     # Environment variables to override ES configuration
     env:
