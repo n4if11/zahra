@@ -178,6 +178,11 @@ apim:
         - console.zahra.local
       annotations:
         nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    env:
+      - name: MGMT_API_URL
+        value: "http://api.zahra.local"   # what the browser will call
+      - name: MANAGEMENT_API_URL
+        value: "http://api.zahra.local"
 
   # Portal Component
   portal:
@@ -186,7 +191,9 @@ apim:
     service:
       type: ClusterIP
       externalPort: 8080
-    
+    env:
+      - name: PORTAL_API_URL
+        value: "http://api.zahra.local"
     ingress:
       enabled: true
       ingressClassName: nginx
