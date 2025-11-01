@@ -69,6 +69,7 @@ apim:
     # Fix: Remove bad rewrite rules
     ingress:
       management:
+        scheme: http
         enabled: true
         ingressClassName: nginx
         path: /management
@@ -82,6 +83,7 @@ apim:
       portal:
         enabled: true
         ingressClassName: nginx
+        scheme: http
         path: /portal
         pathType: Prefix
         hosts:
@@ -143,6 +145,7 @@ apim:
     
     ingress:
       enabled: true
+      scheme: http
       ingressClassName: nginx
       path: /
       pathType: Prefix
@@ -176,6 +179,7 @@ apim:
     
     ingress:
       enabled: true
+      scheme: http
       ingressClassName: nginx
       path: /
       pathType: Prefix
@@ -201,6 +205,7 @@ apim:
     ingress:
       enabled: true
       ingressClassName: nginx
+      scheme: http
       path: /
       pathType: Prefix
       hosts:
