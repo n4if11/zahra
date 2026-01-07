@@ -1,5 +1,7 @@
 kube-prometheus-stack:
- 
+  grafana:
+    adminUser: admin
+    adminPassword: pass1234
 
   alertmanager:
     enabled: false
