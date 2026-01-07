@@ -1,10 +1,6 @@
 # You can customize your values from this link https://artifacthub.io/packages/helm/prometheus-community/kube-prometheus-stack and click on "DEFAULT VALUES"
 # NOTE all values in above reference it must my chiled of name of Application in Chart.yaml (for e.g in below)
 
-kube-prometheus-stack:
-  grafana:
-    adminUser: admin
-    adminPassword: pass1234
-
-  alertmanager:
-    enabled: false
+# external-secrets:
+#   global:
+#     nodeSelector: {}
