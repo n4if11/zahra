@@ -10,7 +10,7 @@ metadata:
 spec:
   destination:
     namespace: argocd
-    name: in-cluster
+    name: zahra-cluster
   project: default
   source:
     path: bootstrap
