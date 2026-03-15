@@ -48,6 +48,7 @@ spec:
             maxDuration: 20s
         syncOptions:
         - CreateNamespace=true
+        - ServerSideApply=true
   templatePatch: |
     metadata:
       labels:
