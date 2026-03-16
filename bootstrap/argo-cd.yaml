@@ -21,28 +21,3 @@ spec:
       selfHeal: true
     syncOptions:
     - allowEmpty=true
----
-apiVersion: argoproj.io/v1alpha1
-kind: Application
-metadata:
-  creationTimestamp: null
-  labels:
-    app.kubernetes.io/name: argo-cd-prod
-  name: argo-cd-prod
-  namespace: argocd
-spec:
-  destination:
-    namespace: argocd
-    name: prod-cluster
-  project: default
-  source:
-    path: bootstrap/argo-cd
-    repoURL: https://github.com/n4if11/zahra
-  syncPolicy:
-    automated:
-      allowEmpty: true
-      prune: true
-      selfHeal: true
-    syncOptions:
-    - allowEmpty=true
-    - CreateNamespace=true
