@@ -1,19 +1,24 @@
 postgres:
   settings:
     superuser:
-      # secretKey: user
-      value: postgres
+      secretKeyRef:
+        name: postgres-credentials
+        key: superuser
     superuserPassword:
-      # secretKey: password
-      value: admin@123
-      
+      secretKeyRef:
+        name: postgres-credentials
+        key: superuserPassword
+
   userDatabase:
     name:
-      # secretKey: postgres
-      value: graviteeapim
+      secretKeyRef:
+        name: postgres-credentials
+        key: dbName
     user:
-      # secretKey: user
-      value: postgres
+      secretKeyRef:
+        name: postgres-credentials
+        key: dbUser
     password:
-      # secretKey: password
-      value: admin@123
+      secretKeyRef:
+        name: postgres-credentials
+        key: dbPassword
