@@ -31,17 +31,20 @@ spec:
   goTemplate: true
   goTemplateOptions: ["missingkey=default"]
   generators:
-    - git:
-        repoURL: https://github.com/n4if11/zahra
-        revision: "HEAD"
-        requeueAfterSeconds: 20
-        files:
-          - path: "apps/*/project-1/**/config.yaml"
-        values:
-          cluster: "{{index .path.segments 1}}"
-          project: "{{index .path.segments 2}}"
-          app_path: "{{.path.path}}"
-          name: "{{.path.basename}}"
+    - matrix:
+        generators:
+          - clusters: {}
+          - git:
+              repoURL: https://github.com/n4if11/zahra
+              revision: "HEAD"
+              requeueAfterSeconds: 20
+              files:
+                - path: "apps/{{.name}}/project-1/**/config.yaml"
+              values:
+                cluster: "{{.name}}"
+                project: "{{index .path.segments 2}}"
+                app_path: "{{.path.path}}"
+                name: "{{.path.basename}}"
   template:
     metadata:
       name: '{{ default ( printf "%s-%s" .values.cluster ( .values.app_path | replace "/" "-" | trimPrefix ( printf "apps-%s-%s-" .values.cluster .values.project ) ) ) .appName }}'

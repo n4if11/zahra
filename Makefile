@@ -66,6 +66,21 @@ apply:
 	@echo "Installing dependencies..."
 	kubectl apply -k manifests/ --context=$(KUBE_CONTEXT)
 
+apply-prod:
+	@echo "Installing ArgoCD in prod cluster..."
+	kubectl apply -k manifests/ --context=$(PROD_KUBE_CONTEXT)
+	@echo "Registering prod-cluster as itself in ArgoCD..."
+	kubectl create secret generic prod-cluster-self \
+		--namespace argocd \
+		--from-literal=name=prod-cluster \
+		--from-literal=server=https://kubernetes.default.svc \
+		--from-literal=config='{"tlsClientConfig":{"insecure":false}}' \
+		--dry-run=client -o yaml | \
+		kubectl label --local -f - argocd.argoproj.io/secret-type=cluster --dry-run=client -o yaml | \
+		kubectl apply -f - --context=$(PROD_KUBE_CONTEXT)
+	@echo "Applying bootstrap to prod cluster..."
+	kubectl apply -f bootstrap.yaml --context=$(PROD_KUBE_CONTEXT)
+
 uninstall:
 	@echo "Uninstalling dependencies..."
 	kubectl delete -k manifests/ --context=$(KUBE_CONTEXT)
