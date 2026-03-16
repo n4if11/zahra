@@ -1,20 +1,13 @@
 # Helm values for n8n
-# Reference: https://artifacthub.io/packages/helm/8gears/n8n
-# NOTE: all values must be nested under the chart name "n8n"
+# Reference: https://artifacthub.io/packages/helm/n8n/n8n
 
 n8n:
-  config:
-    database:
-      type: sqlite
+  existingSecret: n8n-secrets
 
-  secret:
-    database: {}
+config:
+  database:
+    type: sqlite
 
-  extraEnvSecrets:
-    N8N_ENCRYPTION_KEY:
-      name: n8n-secrets
-      key: N8N_ENCRYPTION_KEY
-
-  persistence:
-    enabled: true
-    size: 1Gi
+persistence:
+  enabled: true
+  size: 1Gi
