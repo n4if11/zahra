@@ -5,6 +5,9 @@ extraEnvSecrets:
   N8N_ENCRYPTION_KEY:
     name: n8n-secrets
     key: N8N_ENCRYPTION_KEY
+  CLAUDE_API_KEY:
+    name: n8n-secrets
+    key: CLAUDE_API_KEY
 
 config:
   database:
