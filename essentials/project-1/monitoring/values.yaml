@@ -3,8 +3,10 @@
 
 kube-prometheus-stack:
   grafana:
-    adminUser: admin
-    adminPassword: pass1234
+    admin:
+      existingSecret: monitoring-credentials
+      userKey: admin-user
+      passwordKey: admin-password
 
   alertmanager:
     enabled: false
