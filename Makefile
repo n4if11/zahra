@@ -79,7 +79,7 @@ apply-prod:
 		kubectl label --local -f - argocd.argoproj.io/secret-type=cluster --dry-run=client -o yaml | \
 		kubectl apply -f - --context=$(PROD_KUBE_CONTEXT)
 	@echo "Applying bootstrap to prod cluster..."
-	kubectl apply -f bootstrap.yaml --context=$(PROD_KUBE_CONTEXT)
+	kubectl apply -f bootstrap-prod.yaml --context=$(PROD_KUBE_CONTEXT)
 
 uninstall:
 	@echo "Uninstalling dependencies..."
