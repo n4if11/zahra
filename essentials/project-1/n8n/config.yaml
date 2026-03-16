@@ -1,0 +1,9 @@
+appName: "" # If Empty the Application name will be "<cluster>-n8n"
+destNamespace: "" # If Empty the Application destination namespace will be "n8n"
+destServer: "" # If Empty the Application destination server will be the cluster name
+repoURL: "" # If Empty the Application source repo will be this repo
+srcPath: "" # If Empty the Application source path will be this file's path
+srcTargetRevision: "" # If Empty the Application source target revision will be "HEAD"
+labels: {}
+annotations: {}
+noAutoSync: "ture" # Set to "true" to disable automated sync for this app
