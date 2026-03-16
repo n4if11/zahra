@@ -60,4 +60,18 @@ spec:
         {{- range $key, $value := .annotations }}
         {{ $key }}: {{ $value | quote }}
         {{- end }}
+    {{- if .noAutoSync }}
+    spec:
+      syncPolicy:
+        automated: null
+        retry:
+          limit: 30
+          backoff:
+            duration: 20s
+            factor: 1
+            maxDuration: 20s
+        syncOptions:
+        - CreateNamespace=true
+        - ServerSideApply=true
+    {{- end }}
   syncPolicy: {}
