@@ -1,0 +1,16 @@
+postgres:
+  settings:
+    existingSecret: postgres-credentials
+    superuser:
+      secretKey: POSTGRES_USER
+    superuserPassword:
+      secretKey: POSTGRES_PASSWORD
+
+  userDatabase:
+    existingSecret: postgres-credentials
+    name:
+      secretKey: POSTGRES_DB
+    user:
+      secretKey: USERDB_USER
+    password:
+      secretKey: USERDB_PASSWORD
