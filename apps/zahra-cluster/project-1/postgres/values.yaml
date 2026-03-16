@@ -1,24 +1,16 @@
 postgres:
   settings:
+    existingSecret: postgres-credentials
     superuser:
-      secretKeyRef:
-        name: postgres-credentials
-        key: superuser
+      secretKey: POSTGRES_USER
     superuserPassword:
-      secretKeyRef:
-        name: postgres-credentials
-        key: superuserPassword
+      secretKey: POSTGRES_PASSWORD
 
   userDatabase:
+    existingSecret: postgres-credentials
     name:
-      secretKeyRef:
-        name: postgres-credentials
-        key: dbName
+      secretKey: POSTGRES_DB
     user:
-      secretKeyRef:
-        name: postgres-credentials
-        key: dbUser
+      secretKey: USERDB_USER
     password:
-      secretKeyRef:
-        name: postgres-credentials
-        key: dbPassword
+      secretKey: USERDB_PASSWORD
