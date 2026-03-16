@@ -1,8 +1,10 @@
 # Helm values for n8n
 # Reference: https://artifacthub.io/packages/helm/n8n/n8n
 
-n8n:
-  existingSecret: n8n-secrets
+extraEnvSecrets:
+  N8N_ENCRYPTION_KEY:
+    name: n8n-secrets
+    key: N8N_ENCRYPTION_KEY
 
 config:
   database:
