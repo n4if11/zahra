@@ -17,7 +17,7 @@ spec:
     repoURL: https://github.com/n4if11/zahra
     directory:
       recurse: true
-      include: "appset.yaml"
+      include: "*/appset.yaml"
   syncPolicy:
     automated:
       allowEmpty: true
