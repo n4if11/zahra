@@ -1,4 +1,24 @@
 apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: ai
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  clusterResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  destinations:
+  - namespace: '*'
+    server: https://kubernetes.default.svc
+  namespaceResourceWhitelist:
+  - group: '*'
+    kind: '*'
+  sourceRepos:
+  - '*'
+---
+apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
   name: ai
@@ -25,7 +45,7 @@ spec:
       destination:
         server: https://kubernetes.default.svc
         namespace: '{{ default .values.name .destNamespace }}'
-      project: default
+      project: ai
       source:
         repoURL: '{{ default "https://github.com/n4if11/zahra" .repoURL }}'
         targetRevision: '{{ default "HEAD" .srcTargetRevision }}'

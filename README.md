@@ -32,6 +32,7 @@ apps/
   storage/          # Persistent storage (Longhorn, MinIO, etc.)
   monitoring/       # Observability (Prometheus, Grafana, etc.)
   network/          # Networking (MetalLB, ingress-nginx, etc.)
+  security/         # Security tooling (cert-manager, vault, etc.)
 ```
 
 Each category folder has an `appset.yaml` (ApplicationSet) that auto-discovers apps via `config.yaml` files.
