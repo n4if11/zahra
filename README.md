@@ -1,93 +1,82 @@
-In this repo you wilk find how to create K3D cluster. In addtion with all needed tools for Platform engineers
+# Zahra GitOps
 
-# Kubecodex
+A GitOps repository for Kubernetes using ArgoCD. Single-cluster, category-based app organization — apply once and ArgoCD manages everything from git.
 
-a GitOps repository structure standard using ArgoCD.
+## Bootstrap
 
-## Structure Overview
+Install ArgoCD, then apply the bootstrap manifest:
 
-- `apps/` — Cluster and project-specific applications, organized as `apps/<CLUSTER>/<PROJECT>/<APP_NAME>/`.
-- `essentials/` — Essential applications, deployed to all clusters , organized as `essentials/<PROJECT>/<APP_NAME>/`.
-- `projects/` — Argo CD AppProject definitions for logical grouping and access control.
-- `bootstrap/` — Bootstrap manifests for Argo CD and ApplicationSet resources.
-- `cluster-resources/<CLUSTER>/` — Cluster-wide resources
+```bash
+helm install argocd argo/argo-cd \
+  --namespace argocd --create-namespace \
+  -f bootstrap/argo-cd/chart/values.yaml
 
-## Bootstrap Directory (`bootstrap/`)
-
-This directory contains the initial manifests for bootstrapping Argo CD and the ApplicationSet controllers, as well as the main ApplicationSet definitions that automate the discovery and management of applications and resources in the repository.
-
-## Projects Directory (`projects/`)
-
-This directory contains Argo CD AppProject and ApplicationSet definitions. Projects are used to logically group applications, set access controls, and define deployment destinations. Each project must be defined here before it can be referenced in the apps/ or essentials/ directories.
-
-Use `./kubecodex project <name>` to create projects easily, or copy a project and change th respective names manually
-
-
-## Applications Directory (`apps/`)
-
-Applications are defined in the following structure:
-
-```
-apps/<CLUSTER>/<PROJECT>/<APP_NAME>/config.yaml
+kubectl apply -f bootstrap.yaml
 ```
 
-- `<CLUSTER>`: The name of the cluster where the app will be deployed. This cluster **must be registered in Argo CD**.
-- `<PROJECT>`: The Argo CD project name. The project **must be created** (see the `projects/` directory for how to define projects).
-- `<APP_NAME>`: The application name, which can be any directory structure. The actual Argo CD application name is generated automatically.
+ArgoCD self-heals from this point. Everything else is driven by git.
 
-You can also use nested directories for the app, e.g.:
+## Repository Structure
 
 ```
-apps/<CLUSTER>/<PROJECT>/**/config.yaml
+bootstrap/
+  argo-cd/          # ArgoCD self-managed install (Helm chart + values)
+  argo-cd.yaml      # Application: manages ArgoCD itself
+  root.yaml         # Application: deploys all ApplicationSets from apps/
+bootstrap.yaml      # Apply once to bootstrap any cluster
+
+apps/
+  ai/               # AI & automation workloads (n8n, etc.)
+  platform/         # Platform infrastructure (vault, external-secrets, etc.)
+  datastore/        # Databases and data stores (postgres, redis, etc.)
+  storage/          # Persistent storage (Longhorn, MinIO, etc.)
+  monitoring/       # Observability (Prometheus, Grafana, etc.)
+  network/          # Networking (MetalLB, ingress-nginx, etc.)
 ```
 
-## Essentials Directory (`essentials/`)
+Each category folder has an `appset.yaml` (ApplicationSet) that auto-discovers apps via `config.yaml` files.
 
-The structure is similar to `apps/`, but **without a cluster name**:
+## Adding an App
 
-```
-essentials/<PROJECT>/<APP_NAME>/config.yaml
-```
-
-- For each `config.yaml` in `essentials/`, an application will be created **for every cluster registered in Argo CD automatically**.
-- The naming convention is the same as in `apps/`, with the cluster name prepended to the generated application name.
-
-## Cluster Resources Directory (`cluster-resources/`)
-
-This directory contains cluster-wide resources for each cluster.
+Drop a `config.yaml` (and your Helm chart or manifests) into the right category:
 
 ```
-cluster-resources/<CLUSTER>/*.yaml
+apps/monitoring/grafana/
+  config.yaml       # triggers ArgoCD Application creation
+  Chart.yaml        # Helm wrapper chart
+  values.yaml
 ```
 
-- For each cluster, an application will be created **for every cluster registered in Argo CD automatically**.
-- Any YAML files placed in `cluster-resources/<CLUSTER>/*.yaml` will be applied to the specified cluster.
+ArgoCD picks it up automatically within `requeueAfterSeconds` (20s).
 
-## Usage of `config.yaml`
+## config.yaml Fields
 
-- The presence of a `config.yaml` file in either `apps/` or `essentials/` **triggers the creation of an Argo CD Application** via ApplicationSet.
-- The `config.yaml` file can be **empty**. All fields have default values calculated from the directory structure and ApplicationSet templates.
-- You can override any of the following fields in `config.yaml`:
-  - `appName`: The name of the Argo CD Application 
-  - `destNamespace`: The destination namespace 
-  - `destServer`: The destination cluster/server 
-  - `repoURL`: The Git repository URL 
-  - `srcPath`: The path in the repository 
-  - `srcTargetRevision`: The branch in the repository
-  - `labels`: Additional labels for the Application 
-  - `annotations`: Additional annotations for the Application 
+The presence of `config.yaml` is what triggers app creation. It can be empty — all fields have defaults derived from the directory path.
 
-### Default Values
+| Field | Default |
+|---|---|
+| `appName` | directory basename |
+| `destNamespace` | directory basename |
+| `repoURL` | `https://github.com/n4if11/zahra` |
+| `srcPath` | path to the directory containing `config.yaml` |
+| `srcTargetRevision` | `HEAD` |
+| `noAutoSync` | `false` — set to `"true"` to disable auto-sync |
 
-| Field           | Default Value                                                                                 |
-|-----------------|---------------------------------------------------------------------------------------------|
-| `appName`       | `<CLUSTER>-<nested-directory-structure>` 
-| `destNamespace` | `<nested-directory-structure>` (directory structure under project, with slashes as dashes)   |
-| `destServer`    | The cluster name from the directory structure (for apps/), or each registered cluster (for essentials/) |
-| `repoURL`       | The repository URL where the config.yaml resides                                            |
-| `srcPath`       | The path to the directory containing the config.yaml                                        |
-| `srcTargetRevision`       | `HEAD`                                       |
-| `labels`        | None                                                                                        |
-| `annotations`   | None                                                                                        |
+Example override:
 
-You can override any of these values by specifying them in your `config.yaml`.
+```yaml
+# apps/datastore/postgres/config.yaml
+destNamespace: databases
+noAutoSync: "true"
+```
+
+## Network
+
+MetalLB (L2 mode) provides LoadBalancer IPs from `192.168.23.200-192.168.23.250`.
+Ingress-nginx is the cluster ingress controller.
+ArgoCD is exposed at `http://argocd.local` via ingress-nginx.
+
+Add to your hosts file:
+```
+192.168.23.200  argocd.local
+```
