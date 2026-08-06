@@ -75,9 +75,38 @@ noAutoSync: "true"
 
 MetalLB (L2 mode) provides LoadBalancer IPs from `192.168.23.200-192.168.23.250`.
 Ingress-nginx is the cluster ingress controller.
-ArgoCD is exposed at `http://argocd.local` via ingress-nginx.
+ArgoCD is exposed at `https://argocd.local` via ingress-nginx with TLS.
 
-Add to your hosts file:
+Add to your hosts file (`C:\Windows\System32\drivers\etc\hosts` on Windows):
 ```
 192.168.23.200  argocd.local
 ```
+
+## TLS / cert-manager
+
+cert-manager manages TLS certificates for all ingresses. The trust chain:
+
+```
+ClusterIssuer: selfsigned   ← bootstraps the root CA (used once)
+      ↓
+Certificate: local-ca       ← root CA cert (isCA: true)
+      ↓
+ClusterIssuer: local-ca     ← signs all ingress certs
+      ↓
+Certificate: <app>-tls      ← per-app TLS cert → Secret → ingress-nginx
+```
+
+To annotate any ingress for automatic TLS:
+```yaml
+annotations:
+  cert-manager.io/cluster-issuer: local-ca
+```
+
+### Trusting the CA on Windows (one-time setup)
+
+```bash
+kubectl get secret local-ca-secret -n cert-manager \
+  -o jsonpath='{.data.tls\.crt}' | base64 -d > local-ca.crt
+```
+
+Copy `local-ca.crt` to Windows, double-click → Install Certificate → Local Machine → Trusted Root Certification Authorities. Restart the browser.
