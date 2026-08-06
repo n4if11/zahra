@@ -1,0 +1,11 @@
+ingress-nginx:
+  controller:
+    service:
+      type: LoadBalancer
+    replicaCount: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    admissionWebhooks:
+      enabled: false
