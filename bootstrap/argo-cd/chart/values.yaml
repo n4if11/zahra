@@ -10,6 +10,8 @@ server:
     enabled: true
     ingressClassName: nginx
     hostname: argocd.local
+    tls: true
     annotations:
-      nginx.ingress.kubernetes.io/ssl-redirect: "false"
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
       nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+      cert-manager.io/cluster-issuer: selfsigned
