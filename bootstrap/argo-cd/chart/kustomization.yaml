@@ -8,3 +8,19 @@ helmCharts:
   namespace: argocd
   version: 8.1.2
   valuesFile: values.yaml
+
+patches:
+- patch: |
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: argocd-repo-server
+    spec:
+      template:
+        spec:
+          initContainers:
+          - name: copyutil
+            args: null
+  target:
+    kind: Deployment
+    name: argocd-repo-server
