@@ -13,8 +13,11 @@ spec:
     server: https://kubernetes.default.svc
   project: default
   source:
-    path: projects
+    path: apps
     repoURL: https://github.com/n4if11/zahra
+    directory:
+      recurse: true
+      include: "appset.yaml"
   syncPolicy:
     automated:
       allowEmpty: true

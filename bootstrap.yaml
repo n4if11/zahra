@@ -10,7 +10,7 @@ metadata:
 spec:
   destination:
     namespace: argocd
-    name: zahra-cluster
+    server: https://kubernetes.default.svc
   project: default
   source:
     path: bootstrap
