@@ -8,14 +8,15 @@ app-template:
             tag: v1.0
             pullPolicy: Never
           env:
-            DATABASE_URL: "jdbc:postgresql://postgres-cluster-rw.postgres-cluster:5432/baynna?password=dogvh7MYrYv0WE80g5qWWMCQqzNpae0bpzUptgChia8XXi6XqDxt2oCiHvq0DUdY&user=baynna"
+            DATABASE_URL: "postgresql://baynna:dogvh7MYrYv0WE80g5qWWMCQqzNpae0bpzUptgChia8XXi6XqDxt2oCiHvq0DUdY@postgres-cluster-rw.postgres-cluster:5432/baynna"
             SERPAPI_KEY: "6157b8990cc50938a48117ae1ce317dd2228b340a7bbd459d59c8a48fcabeade"
           securityContext:
             runAsUser: 1001
             runAsGroup: 1001
             runAsNonRoot: true
             allowPrivilegeEscalation: false
-      nodeNmae: worker2
+      nodeSelector:
+        kubernetes.io/hostname: worker2
 
   service:
     main:
