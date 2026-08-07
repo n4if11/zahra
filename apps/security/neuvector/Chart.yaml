@@ -1,0 +1,8 @@
+apiVersion: v2
+name: neuvector
+description: NeuVector container security platform
+version: 0.1.0
+dependencies:
+  - name: core
+    version: "2.8.13"
+    repository: https://neuvector.github.io/neuvector-helm/

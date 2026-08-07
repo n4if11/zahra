@@ -1,0 +1,15 @@
+core:
+  controller:
+    replicas: 1
+  cve:
+    scanner:
+      replicas: 1
+  manager:
+    ingress:
+      enabled: true
+      ingressClassName: nginx
+      host: neuvector.local
+      tls: true
+      secretName: neuvector-tls
+      annotations:
+        cert-manager.io/cluster-issuer: local-ca
