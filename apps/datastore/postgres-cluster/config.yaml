@@ -1,1 +1,2 @@
 destNamespace: postgres-cluster
+noAutoSync: "true"

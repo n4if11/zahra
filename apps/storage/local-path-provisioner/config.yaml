@@ -1,1 +1,2 @@
 destNamespace: local-path-storage
+noAutoSync: "true"
