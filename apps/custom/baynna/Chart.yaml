@@ -1,0 +1,8 @@
+apiVersion: v2
+name: baynna
+description: Baynna Next.js app (via bjw-s app-template)
+version: 0.1.0
+dependencies:
+  - name: app-template
+    version: "5.0.1"
+    repository: https://bjw-s-labs.github.io/helm-charts

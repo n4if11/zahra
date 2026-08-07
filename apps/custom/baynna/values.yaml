@@ -1,0 +1,40 @@
+app-template:
+  controllers:
+    main:
+      containers:
+        main:
+          image:
+            repository: docker.io/library/baynna
+            tag: latest
+          env:
+            DATABASE_URL: jdbc:postgresql://postgres-cluster-rw.postgres-cluster:5432/baynna?password=dogvh7MYrYv0WE80g5qWWMCQqzNpae0bpzUptgChia8XXi6XqDxt2oCiHvq0DUdY&user=baynna
+            SERPAPI_KEY: 6157b8990cc50938a48117ae1ce317dd2228b340a7bbd459d59c8a48fcabeade
+          securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
+            runAsNonRoot: true
+            allowPrivilegeEscalation: false
+
+  service:
+    main:
+      controller: main
+      ports:
+        http:
+          port: 3000
+
+  ingress:
+    main:
+      className: nginx
+      annotations:
+        cert-manager.io/cluster-issuer: local-ca
+      hosts:
+        - host: baynna.local
+          paths:
+            - path: /
+              service:
+                identifier: main
+                port: http
+      tls:
+        - hosts:
+            - baynna.local
+          secretName: baynna-tls
