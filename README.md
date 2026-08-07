@@ -33,6 +33,7 @@ apps/
   monitoring/       # Observability (Prometheus, Grafana, etc.)
   network/          # Networking (MetalLB, ingress-nginx, etc.)
   security/         # Security tooling (cert-manager, vault, etc.)
+  custom/           # Custom / user-defined apps
 ```
 
 Each category folder has an `appset.yaml` (ApplicationSet) that auto-discovers apps via `config.yaml` files.
