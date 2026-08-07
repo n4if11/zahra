@@ -1,0 +1,6 @@
+name: postgres-cluster
+instances: 1
+storage:
+  size: 5Gi
+database: baynna
+owner: baynna

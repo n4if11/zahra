@@ -1,0 +1,4 @@
+apiVersion: v2
+name: local-path-provisioner
+description: Rancher local-path-provisioner (dynamic hostPath storage)
+version: 0.1.0
