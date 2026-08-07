@@ -15,7 +15,7 @@ app-template:
             runAsGroup: 1001
             runAsNonRoot: true
             allowPrivilegeEscalation: false
-        nodeNmae: worker2
+      nodeNmae: worker2
 
   service:
     main:
