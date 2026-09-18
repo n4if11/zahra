@@ -103,7 +103,7 @@ app-template:
       containers:
         main:
           image:
-            repository: ncai-gateway
+            repository: docker.io/library/ncai-gateway
             tag: "0.1.0"
             pullPolicy: IfNotPresent
 
