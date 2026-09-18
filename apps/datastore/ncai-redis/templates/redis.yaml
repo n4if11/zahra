@@ -1,0 +1,107 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.name }}-auth
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+type: Opaque
+stringData:
+  password: {{ .Values.password | quote }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.name }}
+spec:
+  replicas: 1
+  # Single instance, no shared volume: never run two at once.
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: {{ .Values.name }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      containers:
+        - name: redis
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          # Password comes from the env rather than an --requirepass literal so
+          # it does not sit in the pod spec for anyone with `get pods`.
+          command:
+            - sh
+            - -c
+            - |
+              exec redis-server \
+                --requirepass "$REDIS_PASSWORD" \
+                --save "" \
+                --appendonly no \
+                --maxmemory {{ .Values.maxmemory }} \
+                --maxmemory-policy {{ .Values.maxmemoryPolicy }}
+          env:
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.name }}-auth
+                  key: password
+            # redis-cli picks this up automatically, so the probes below
+            # authenticate without repeating the password.
+            - name: REDISCLI_AUTH
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.name }}-auth
+                  key: password
+          ports:
+            - name: redis
+              containerPort: 6379
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 10
+            periodSeconds: 20
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /data
+      volumes:
+        # Persistence is deliberately off; see values.yaml.
+        - name: data
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.name }}
+  labels:
+    app.kubernetes.io/name: {{ .Values.name }}
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: {{ .Values.name }}
+  ports:
+    - name: redis
+      port: 6379
+      targetPort: redis

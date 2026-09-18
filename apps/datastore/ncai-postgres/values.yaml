@@ -1,0 +1,19 @@
+name: ncai-postgres
+instances: 1
+storage:
+  size: 10Gi
+
+# Owner of the gateway schema. The app connects as this user, never as
+# postgres — CNPG keeps the superuser disabled by default.
+database: ncai_gateway
+owner: ncai
+# Consumed by apps/ai/ncai-gateway/values.yaml (secrets.databaseUrl).
+# Changing it here means changing it there too.
+password: "7aBz84tPwvqEfNvzw00KHlnPsCroyC"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 1Gi

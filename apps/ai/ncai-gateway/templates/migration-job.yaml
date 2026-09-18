@@ -1,0 +1,45 @@
+{{- if .Values.migrations.enabled }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  # Unique per revision so Helm can re-run it on every upgrade.
+  name: {{ include "ncai.fullname" . }}-migrate-{{ .Release.Revision }}
+  labels:
+    {{- include "ncai.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-weight: "-5"
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: {{ .Values.migrations.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        {{- include "ncai.labels" . | nindent 8 }}
+    spec:
+      restartPolicy: Never
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: migrate
+          {{- $img := (index .Values "app-template").controllers.main.containers.main.image }}
+          image: "{{ $img.repository }}:{{ $img.tag }}"
+          imagePullPolicy: {{ $img.pullPolicy }}
+          args: ["migrate"]
+          envFrom:
+            - secretRef:
+                name: {{ include "ncai.secretName" . }}
+            - configMapRef:
+                name: ncai-gateway-config
+          {{- if and (not .Values.secrets.databaseUrl) .Values.postgres.passwordSecret.name }}
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.postgres.passwordSecret.name }}
+                  key: {{ .Values.postgres.passwordSecret.key }}
+          {{- end }}
+          resources:
+            {{- toYaml .Values.migrations.resources | nindent 12 }}
+{{- end }}

@@ -1,0 +1,4 @@
+apiVersion: v2
+name: ncai-redis
+description: Redis backing NCAI Gateway's distributed rate limiting
+version: 0.1.0

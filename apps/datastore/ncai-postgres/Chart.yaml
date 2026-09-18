@@ -1,0 +1,4 @@
+apiVersion: v2
+name: ncai-postgres
+description: CloudNativePG Postgres cluster backing NCAI Gateway
+version: 0.1.0

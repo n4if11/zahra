@@ -1,0 +1,24 @@
+name: ncai-redis
+
+image:
+  repository: redis
+  tag: "7.4-alpine"
+  pullPolicy: IfNotPresent
+
+# Consumed by apps/ai/ncai-gateway/values.yaml (config.redisUrl).
+# Alphanumeric on purpose: it is embedded in a redis:// URL there.
+# Changing it here means changing it there too.
+password: "CTfwmJbOuL2yRMcBp0g7GtlPjwrOHedX"
+
+# Rate-limit counters are throwaway state with a TTL — there is nothing here
+# worth surviving a restart, so persistence is off and /data is an emptyDir.
+# Losing the data just resets the current limit windows.
+maxmemory: 256mb
+maxmemoryPolicy: allkeys-lru
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 320Mi

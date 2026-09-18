@@ -1,0 +1,21 @@
+apiVersion: v2
+name: ncai-gateway
+description: NCAI Gateway - LLM gateway with model-centric key governance
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+home: https://github.com/your-org/ncai-gateway
+keywords:
+  - llm
+  - gateway
+  - ai
+  - proxy
+
+# Thin wrapper over bjw-s app-template: it already knows how to render
+# deployments, services, ingress, probes and PVCs from values, so this chart
+# only has to supply the values and the handful of NCAI-specific extras
+# (secret, migration hook) in templates/.
+dependencies:
+  - name: app-template
+    version: 3.7.3
+    repository: https://bjw-s-labs.github.io/helm-charts

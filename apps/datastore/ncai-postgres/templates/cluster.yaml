@@ -1,0 +1,30 @@
+# The app credentials are supplied rather than generated: the gateway lives in
+# another namespace, so it cannot read a CNPG-generated secret and instead gets
+# the same password inlined in its own values.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: {{ .Values.name }}-app
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+type: kubernetes.io/basic-auth
+stringData:
+  username: {{ .Values.owner | quote }}
+  password: {{ .Values.password | quote }}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ .Values.name }}
+spec:
+  instances: {{ .Values.instances }}
+  storage:
+    size: {{ .Values.storage.size }}
+  resources:
+    {{- toYaml .Values.resources | nindent 4 }}
+  bootstrap:
+    initdb:
+      database: {{ .Values.database }}
+      owner: {{ .Values.owner }}
+      secret:
+        name: {{ .Values.name }}-app

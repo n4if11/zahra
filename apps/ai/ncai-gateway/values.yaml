@@ -1,0 +1,187 @@
+# ---------------------------------------------------------------------------
+# NCAI Gateway — Helm values (bjw-s app-template)
+#
+# Everything under `app-template:` is passed through to the subchart.
+# NCAI-specific settings live at the top level.
+#
+# Deployed by ArgoCD through apps/ai/appset.yaml: the config.yaml next to this
+# file creates Application "ncai-gateway" in namespace ncai-gateway. Sync is
+# manual (noAutoSync), like every other app in this repo.
+# ---------------------------------------------------------------------------
+
+# --- secrets ---------------------------------------------------------------
+secrets:
+  # false => the chart creates a Secret from the literals below.
+  # true  => you manage the Secret yourself; set existingSecretName.
+  existingSecret: false
+  existingSecretName: ""
+
+  # Generated with: openssl rand -hex 32
+  # Committed in clear, matching how this repo already handles app credentials
+  # (see apps/custom/baynna/values.yaml). SALT_KEY encrypts stored provider
+  # keys — rotating it makes every key already in the database unreadable.
+  masterKey: "56a727ae0c4dff872142658c325421d6d4786fd958a02dcd64639861967efb6d"
+  jwtSecret: "3522130f06d9d9a8abf432bfca8fb5d4d8567ed6e753206b613de14b5d241ce0"
+  saltKey: "2ba10f95dbb653551e1d6f72b8bb6dccdfd0f98d7fe445541c3eb1e0d4dda21e"
+
+  # Bootstrap admin for the UI at https://ncai.local/ui/
+  adminEmail: "admin@ncai.local"
+  adminPassword: "pxzih7zysz2fopTHXbmZ"
+
+  # The CNPG cluster from apps/datastore/ncai-postgres. The password here is
+  # the one set in that app's values.yaml — change both together.
+  databaseUrl: "postgresql://ncai:7aBz84tPwvqEfNvzw00KHlnPsCroyC@ncai-postgres-rw.ncai-postgres.svc.cluster.local:5432/ncai_gateway"
+
+  # Optional OIDC client secret.
+  oidcClientSecret: ""
+
+# --- database --------------------------------------------------------------
+# Postgres is its own ArgoCD app: apps/datastore/ncai-postgres (CloudNativePG,
+# namespace ncai-postgres). databaseUrl above is set, so the fields below are
+# unused; they are kept accurate for the day the URL is dropped.
+postgres:
+  host: "ncai-postgres-rw.ncai-postgres.svc.cluster.local"
+  port: 5432
+  database: "ncai_gateway"
+  user: "ncai"
+  # The CNPG secret lives in the ncai-postgres namespace and cannot be read
+  # from here, so the password travels inside databaseUrl instead.
+  passwordSecret:
+    name: ""
+    key: "password"
+
+# --- migrations ------------------------------------------------------------
+migrations:
+  # Run `alembic upgrade head` as a pre-upgrade Helm hook. Strongly recommended
+  # once replicaCount > 1, so exactly one process migrates. When enabled, the
+  # app's own RUN_MIGRATIONS_ON_START is turned off automatically.
+  enabled: true
+  backoffLimit: 3
+  resources:
+    requests: {cpu: 50m, memory: 128Mi}
+    limits: {memory: 512Mi}
+
+# --- application config ----------------------------------------------------
+config:
+  logLevel: INFO
+  environment: production
+  # New models reachable by nobody until granted. The point of this gateway.
+  defaultModelAccess: restricted
+  allowKeySelfService: false
+  keyPrefix: "sk-ncai-"
+  requestTimeout: 600
+  corsOrigins: ""
+  rootPath: ""
+  # uvicorn workers per pod. Redis is configured below, so rate limits stay
+  # correct if you raise this or the replica count.
+  workers: 1
+  # apps/datastore/ncai-redis. Without it, rate limits are counted per process,
+  # so replicas * workers > 1 enforces them that many times too loosely.
+  # Password matches that app's values.yaml — change both together. This value
+  # lands in the Secret, not the ConfigMap, because it embeds the password.
+  redisUrl: "redis://:CTfwmJbOuL2yRMcBp0g7GtlPjwrOHedX@ncai-redis.ncai-redis.svc.cluster.local:6379/0"
+
+oidc:
+  enabled: false
+  issuer: ""
+  clientId: ""
+  providerName: "SSO"
+  scopes: "openid email profile"
+  redirectUrl: ""
+  groupsClaim: "groups"
+  # Members of these IdP groups become proxy_admin.
+  adminGroups: ""
+  defaultRole: "internal_user"
+  autoProvision: true
+
+# --- app-template passthrough ---------------------------------------------
+app-template:
+  controllers:
+    main:
+      replicas: 1
+      strategy: RollingUpdate
+      containers:
+        main:
+          image:
+            repository: ncai-gateway
+            tag: "0.1.0"
+            pullPolicy: IfNotPresent
+
+          envFrom:
+            - secretRef:
+                name: ncai-gateway-secrets
+            - configMapRef:
+                name: ncai-gateway-config
+
+          probes:
+            # Liveness deliberately does not touch the database: a database
+            # blip should not restart every pod.
+            liveness:
+              enabled: true
+              custom: true
+              spec:
+                httpGet: {path: /health/liveness, port: 4000}
+                initialDelaySeconds: 15
+                periodSeconds: 20
+                timeoutSeconds: 5
+                failureThreshold: 3
+            readiness:
+              enabled: true
+              custom: true
+              spec:
+                httpGet: {path: /health/readiness, port: 4000}
+                initialDelaySeconds: 10
+                periodSeconds: 10
+                timeoutSeconds: 5
+                failureThreshold: 3
+            startup:
+              enabled: true
+              custom: true
+              spec:
+                httpGet: {path: /health/liveness, port: 4000}
+                periodSeconds: 5
+                failureThreshold: 30
+
+          resources:
+            requests: {cpu: 200m, memory: 512Mi}
+            limits: {memory: 2Gi}
+
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 10001
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop: ["ALL"]
+
+  service:
+    main:
+      controller: main
+      ports:
+        http:
+          port: 4000
+          targetPort: 4000
+
+  ingress:
+    main:
+      enabled: true
+      className: nginx
+      annotations:
+        cert-manager.io/cluster-issuer: local-ca
+        # LLM responses stream; buffering them defeats the purpose.
+        nginx.ingress.kubernetes.io/proxy-buffering: "off"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "600"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "600"
+        nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+      hosts:
+        - host: ncai-gateway.local
+          paths:
+            - path: /
+              pathType: Prefix
+              service:
+                identifier: main
+                port: http
+      tls:
+        - hosts:
+            - ncai-gateway.local
+          secretName: ncai-gateway-tls

@@ -1,0 +1,33 @@
+NCAI Gateway {{ .Chart.AppVersion }} deployed as "{{ .Release.Name }}".
+
+1. Reach the admin UI:
+
+{{- if (index .Values "app-template").ingress.main.enabled }}
+   https://{{ (first (index .Values "app-template").ingress.main.hosts).host }}/ui/
+{{- else }}
+   kubectl -n {{ .Release.Namespace }} port-forward svc/{{ .Release.Name }} 4000:4000
+   then open http://localhost:4000/ui/
+{{- end }}
+
+2. Sign in as {{ .Values.secrets.adminEmail }}.
+{{- if not .Values.secrets.adminPassword }}
+   No ADMIN_PASSWORD was set, so one was generated and printed once at startup:
+
+   kubectl -n {{ .Release.Namespace }} logs deploy/{{ .Release.Name }} | grep -A4 BOOTSTRAP
+{{- end }}
+
+3. Add a model, then grant access to it from the Models page. Models are
+   created {{ .Values.config.defaultModelAccess }} — until you grant access,
+   no key can call them. That is intentional.
+
+4. Point clients at:
+   base_url: http{{ if (index .Values "app-template").ingress.main.enabled }}s{{ end }}://<host>/v1
+   api_key:  a virtual key created on the Keys page
+
+{{- if and (not .Values.config.redisUrl) (or (gt ((index .Values "app-template").controllers.main.replicas | int) 1) (gt (.Values.config.workers | int) 1)) }}
+
+WARNING: you are running {{ (index .Values "app-template").controllers.main.replicas }} replica(s)
+x {{ .Values.config.workers }} worker(s) with no config.redisUrl. Rate limits are counted
+per process, so the effective limit is several times what you configured.
+Set config.redisUrl to enforce limits accurately across pods.
+{{- end }}
